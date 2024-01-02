@@ -1,22 +1,32 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useSocket } from "../../src/Context/SocketProvider";
+import { useNavigate } from "react-router-dom";
 const Lobby = () => {
   const [email, setEmail] = useState("");
   const [room, setRoom] = useState("");
   const socket = useSocket();
-  console.log("Socket ", socket);
+  //console.log("Socket ", socket);
+  const navigate= useNavigate()
+  const handleJoinRoom= useCallback((data)=>{
+    const {email,room}=data
+    console.log("data",data)
+    navigate(`/room/${room}`)
+  },[navigate])   
+
   const handleSubmitForm = useCallback(
     (e) => {
       e.preventDefault();
-      socket.emit("joinroom", { email, room });
+      const data={email,room}
+      socket.emit("joinroom",data);
     },
-    [email, room]
+    [email,room,socket]
   );
 
   useEffect(()=>{
-    socket.on("joinroom",data=>{
-      console.log("data from backend",data)
-    })
+    socket.on("joinroom",handleJoinRoom)
+    return ()=>{
+      socket.off("joinroom",handleJoinRoom)
+    }
   },[socket])
   return (
     <div>
