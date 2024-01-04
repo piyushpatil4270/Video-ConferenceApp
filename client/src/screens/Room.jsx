@@ -53,7 +53,17 @@ const Room = () => {
     },
     [myStream]
   );
+  const handleNegoNeeded=useCallback(async()=>{
+    const offer=await peer.getOffer()
+    socket.emit("peer:nego:needed",{offer,to:remoteSocketId})
 
+  },[remoteSocketId,socket])
+  useEffect(()=>{
+    peer.peer.addEventListener("negotiationneeded",handleNegoNeeded)
+    return ()=>{
+      peer.peer.removeEventListener("negotiationneeded",handleNegoNeeded)
+    }
+  },[handleNegoNeeded])
   useEffect(()=>{
     peer.peer.addEventListener("track",async ev =>{
      const remoteStream = ev.streams
