@@ -58,6 +58,10 @@ const Room = () => {
     socket.emit("peer:nego:needed",{offer,to:remoteSocketId})
 
   },[remoteSocketId,socket])
+
+  const handleNegoIncoming=useCallback(()=>{
+    
+  },[])
   useEffect(()=>{
     peer.peer.addEventListener("negotiationneeded",handleNegoNeeded)
     return ()=>{
@@ -76,6 +80,7 @@ const Room = () => {
     socket.on("incoming:call", handleIncomingCall);
 
     socket.on("call:accepted", handleAcceptCall);
+    socket.on("peer:nego:needed,handleNegoIncoming")
 
     return () => {
       socket.off("userjoined", handleUserJoined);
